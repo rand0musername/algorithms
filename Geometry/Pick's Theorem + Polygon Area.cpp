@@ -62,6 +62,7 @@ int polyEdge(point* p, int n)
 }
 
 // Integer points inside the polygon (Pick's theorem)
+// https://upload.wikimedia.org/wikipedia/commons/f/f1/Pick-theorem.png
 int polyInside(point* p, int n)
 {
     return round( polyArea(p, n) + 1 - polyEdge(p, n) / 2.0 );
