@@ -68,9 +68,6 @@ map<char, TreeNode*> loc;
 
 // Average entropy, the lower bound for the average char encoding length
 double H = 0.0;
-// Calculating char encoding length so far
-int total_len = 0;
-int chars_encoded = 0;
 
 // We use the sample string to calculate freqs and avg entropy
 void freq_analysis(string sample)
@@ -214,8 +211,6 @@ string encode(string s)
             throw;
         }
     }
-    chars_encoded += s.size();
-    total_len += ret.size();
     return ret;
 }
 
@@ -250,33 +245,19 @@ string decode(string s)
     return ret;
 }
 
-// Calculating the average char encoding length so far
-double currH()
-{
-    return (double)total_len / chars_encoded;
-}
-
-// Verify our efficiency
-void print_entropy()
-{
-    printf("Average entropy: %7.4f\n", H);
-    if(chars_encoded > 0)
-    {
-        printf("Average encoding length: %7.4f\n", currH());
-    }
-}
-
 // Print all the relevant data
-void print_tree_info()
+void print_info()
 {
-    print_entropy();
+    double avg_enc_len = 0.0;
     for(auto &x : freq)
     {
         printf("freq('%c') = %7.4f\t", x.first, x.second);
         printf("H('%c') = %7.4f\t", x.first, log2(1 / x.second));
         try
         {
-            printf("code('%c') = %s\n", x.first, encode_char(x.first).c_str());
+            string code = encode_char(x.first);
+            printf("code('%c') = %s\n", x.first, code.c_str());
+            avg_enc_len += x.second * code.size();
         }
         catch(const string &ex)
         {
@@ -284,6 +265,8 @@ void print_tree_info()
             return;
         }
     }
+    printf("Average entropy: %7.4f\n", H);
+    printf("Expected average encoding length: %7.4f\n", avg_enc_len);
 }
 
 /*
@@ -292,6 +275,10 @@ void print_tree_info()
     ENC huffman
     DEC 10000010010
     LAST
+    FINISH
+
+    cdbbbbbbaaaa
+    HEAP
     FINISH
 */
 
@@ -317,7 +304,7 @@ int main()
     {
         return 0;
     }
-    print_tree_info();
+    print_info();
     // Encode and decode
     string lastEncoded;
     while(true)
@@ -363,7 +350,6 @@ int main()
         else
         {
             // Finish
-            print_entropy();
             return 0;
         }
     }
