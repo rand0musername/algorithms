@@ -3,6 +3,7 @@
 // init: O(NlogN)
 // get: O(1)
 // N - array size
+// Common application: LCA (storing 2^n-th parent)
 
 #include <bits/stdc++.h>
 #define DBG false

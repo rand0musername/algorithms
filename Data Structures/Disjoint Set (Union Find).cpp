@@ -23,7 +23,7 @@ using namespace std;
 // Single node
 struct node
 {
-    // rank and parent
+    // Rank and parent
     int rnk, p;
 };
 
@@ -42,6 +42,7 @@ void init()
     }
 }
 
+// Find the root of a node
 int root(int x)
 {
     // Path compression
