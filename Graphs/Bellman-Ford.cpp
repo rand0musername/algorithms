@@ -1,7 +1,7 @@
 // RandomUsername (Nikola Jovanovic)
-// Floyd-Warshall all pairs shortest path
-// O(V^3)
-// Can detect negative cycles
+// Bellman-Ford single source shortest paths
+// O(V*E)
+// Handles negative weight edges
 
 #include <bits/stdc++.h>
 #define DBG false
@@ -20,88 +20,45 @@ using namespace std;
 
 struct edge
 {
-    int a, b; // Endpoints
+    int a, b;
     int cost;
 };
 
-struct node
-{
-    vector<edge> adj;
-};
+vector<edge> edges;
+int D[MAXN];
+int from[MAXN];
 
-// The graph
-node g[MAXN];
-int D[MAXN][MAXN];
-int path[MAXN][MAXN];
-
-bool FW(int n)
+bool BF(int n, int startNode)
 {
     // Init
     for(int i = 1; i <= n; i++)
     {
-        for(int j = 1; j <= n; j++)
-        {
-            D[i][j] = INF;
-        }
-        D[i][i] = 0;
+        D[i] = INF;
     }
+    D[startNode] = 0;
+    from[startNode] = startNode;
+    // Relax all edges n - 1 times
     for(int i = 1; i <= n; i++)
     {
-        int sz = g[i].adj.size();
-        for(int j = 0; j < sz; j++)
+        for(edge &e : edges) 
         {
-            edge e = g[i].adj[j];
-            D[i][e.b] = e.cost; 
-        }
-    }
-    // Using first k nodes to find a better route from i to j
-    for(int k = 1; k <= n; k++)
-    {
-        for(int i = 1; i <= n; i++)
-        {
-            for(int j = 1; j <= n; j++)
+            if(D[e.a] + e.cost < D[e.b])
             {
-               if(D[i][k] + D[k][j] < D[i][j])
-               {
-                    D[i][j] = D[i][k] + D[k][j];
-                    // Node with the highest index on the best path from i to j
-                    path[i][j] = k;
-               }
+                if(i == n)
+                {
+                    // If anything can be relaxed in n-th
+                    // iteration => there are negative cycles
+                    return false;
+                }
+                D[e.b] = D[e.a] + e.cost;
+                from[e.b] = e.a;
             }
-        }
-    }
-    // Detect negative cycles
-    for(int i = 1; i <= n; i++)
-    {
-        if(D[i][i] < 0)
-        {
-            return false;
         }
     }
     return true;
 }
 
-vector<int> reconstruct(int a, int b)
-{
-    vector<int> ret;
-    int middle = path[a][b];
-    if(middle == 0)
-    {
-        ret.push_back(a);
-    }
-    else
-    {
-        vector<int> left = reconstruct(a, middle);
-        vector<int> right = reconstruct(middle, b);
-        ret.insert(ret.end(), left.begin(), left.end());
-        left.push_back(middle);
-        ret.insert(ret.end(), right.begin(), right.end());
-    }
-    return ret;
-}
-
 // Testing
-// Test problem: http://www.spoj.com/problems/LCA/
 int main()
 {
     int n, m;
@@ -110,22 +67,17 @@ int main()
     {
         int u, v, w;
         scanf("%d %d %d", &u, &v, &w);
-        g[u].adj.push_back({u, v, w});
-        // g[v].adj.push_back({v, u, w}); // Undirected graph
+        edges.push_back({u, v, w});
+        edges.push_back({v, u, w}); // Bidirectional
     }
-    if(!FW(n))
+    if(!BF(n, 1))
     {
         printf("Negative cycles exist!\n");
         return 0;
     }
-    int a, b;
-    scanf("%d %d", &a, &b);
-    printf("Shortest path from %d to %d (len = %d):\n", a, b, D[a][b]);
-    vector<int> v = reconstruct(a, b);
-    for(int node : v)
+    for(int i = 1; i <= n; i++)
     {
-        printf("%d -> ", node);
+        printf("Distance from 1 to %d = %d\n", i, D[i]);
     }
-    printf("%d\n", b);
     return 0;
 }

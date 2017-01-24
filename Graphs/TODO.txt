@@ -1,9 +1,13 @@
-- Bellman-Ford
-- Biconnected Components + Bridges + Articulation Vertices
-- Cycle Detection
+- Hierlozer's Eulerian Path
+
 - Edmonds-Karp
 - Ford-Fulkerson
-- Hierlozer's Eulerian Path
 - Hopcroft-Karp
+
 - Kosaraju's Strongly Connected Components
 - Tarjan's Strongly Connected Components
+- Biconnected Components + Bridges + Articulation Vertices
+
+- Shell sort
+- Radix sort x 2
+- Counting sort 
