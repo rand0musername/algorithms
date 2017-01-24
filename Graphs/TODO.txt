@@ -1,5 +1,1 @@
-- Hierlozer's Eulerian Path
-
-- Kosaraju's Strongly Connected Components
-- Tarjan's Strongly Connected Components
-- Biconnected Components + Bridges + Articulation Vertices
+- SCC: Kosaraju, Tarjan, biconnected components, bridges, articulation vertices
