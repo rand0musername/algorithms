@@ -1,9 +1,5 @@
 - Hierlozer's Eulerian Path
 
-- Edmonds-Karp
-- Ford-Fulkerson
-- Hopcroft-Karp
-
 - Kosaraju's Strongly Connected Components
 - Tarjan's Strongly Connected Components
 - Biconnected Components + Bridges + Articulation Vertices
