@@ -1,7 +1,7 @@
 // RandomUsername (Nikola Jovanovic)
-// Counting Sort
-// Sorting an array: O( N + K )
-// N - array size, K - upper bound for the numbers
+// MSD Radix Sort
+// Sorting an array: O( N * W )
+// N - array size, W - word size
 
 #include <bits/stdc++.h>
 #include <unistd.h>
