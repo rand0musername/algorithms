@@ -4,6 +4,7 @@
 // N - array size, K - upper bound for the numbers
 
 #include <bits/stdc++.h>
+#include <unistd.h>
 #define DBG false
 #define debug(x) if(DBG) printf("(ln %d) %s = %d\n", __LINE__, #x, x);
 #define lld long long
@@ -22,35 +23,65 @@ using namespace std;
 
 // The array we're sorting and its size
 int a[MAXN];
-int cnt[MAXNUM];
 int tmp[MAXN];
 int n;
-int range; // Number range: [1..range]
+
+// Extract digit at position pos
+int digitAt(int n, int pos)
+{
+    return (n / lrint(pow(10, pos))) % 10;
+}
 
 // Stable version
-void countingSort()
+void countingSort(int l, int r, int pos)
 {
-    // Count every element
-    for(int i = 1; i <= n; i++)
+    // Reset cnt array
+    int cnt[10];
+    for(int i = 0; i <= 9; i++)
     {
-        cnt[a[i]]++;
+        cnt[i] = 0;
+    }
+    // Count every element
+    for(int i = l; i <= r; i++)
+    {
+        cnt[digitAt(a[i], pos)]++;
     }
     // Calculate indices
-    for(int i = 1; i <= range; i++)
+    for(int i = 1; i <= 9; i++)
     {
         cnt[i] += cnt[i-1];
     }
     // Place the elements in a temporary array
-    for(int i = n; i >= 1; i--)
+    for(int i = r; i >= l; i--)
     {
-        int idx = cnt[a[i]]--;
+        int idx = (l - 1) + cnt[digitAt(a[i], pos)]--;
         tmp[idx] = a[i];
     }
     // Put the elements back
-    for(int i = 1; i <= n; i++)
+    for(int i = l; i <= r; i++)
     {
         a[i] = tmp[i];
+    }    
+    // Recurse
+    if(pos == 0)
+    {
+        return;
     }
+    int last = l;
+    for(int i = l+1; i <= r; i++)
+    {
+        if(digitAt(a[i], pos) > digitAt(a[i-1], pos))
+        {
+            countingSort(last, i - 1, pos - 1);
+            last = i;
+        }
+    }
+    countingSort(last, r, pos - 1);
+}
+
+void msdRadixSort()
+{
+    countingSort(1, n, 9);
 }
 
 // Testing
@@ -61,8 +92,7 @@ int main()
     {
         scanf("%d", &a[i]);
     }
-    range = 1000;
-    countingSort();
+    msdRadixSort();
     for(int i = 1; i <= n; i++)
     {
         printf("%d ", a[i]);

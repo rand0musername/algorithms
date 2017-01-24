@@ -23,114 +23,153 @@
 using namespace std;
 
 // Maxheap
-struct heap
+class BinaryHeap
 {
-    int h[MAXN];
-    int heapSz;
+    private:
+        int h[MAXN];
+        int heapSz;
 
-    void init()
-    {
-        heapSz = 0;
-    }
-
-    void push(int x)
-    {
-        h[++heapSz] = x;
-        int i = heapSz;
-        while(i > 1)
+        void siftUp(int i)
         {
-            if(h[i/2] < h[i])
-                swap(h[i], h[i/2]), i /= 2;
-            else
-                return;
+            while(i > 1)
+            {
+                if(h[i] > h[i/2])
+                    swap(h[i], h[i/2]), i /= 2;
+                else
+                    return;
+            }
         }
-    }
 
-    int top()
-    {
-         if(hEmpty())
-            return -1;
-        return h[1];
-    }
-
-    void pop()
-    {
-        if(hEmpty())
-            return;
-
-        swap(h[1], h[heapSz--]);
-        int i = 1, swp;
-        while(i <= heapSz)
+        void siftDown(int i)
         {
-            swp = i;
-            if(2*i <= heapSz && h[2*i] > h[swp])
-                swp = 2*i;
-            if(2*i + 1 <= heapSz && h[2*i+1] > h[swp])
-                swp = 2*i + 1;
-            if(swp == i)
-                return;
-            else
-                swap(h[i], h[swp]), i = swp;
+            int swp;
+            while(i <= heapSz)
+            {
+                swp = i;
+                if(2*i <= heapSz && h[2*i] > h[swp])
+                    swp = 2*i;
+                if(2*i + 1 <= heapSz && h[2*i+1] > h[swp])
+                    swp = 2*i + 1;
+                if(swp == i)
+                    return;
+                else
+                    swap(h[i], h[swp]), i = swp;
+            }
         }
-    }
 
-    int hSize()
-    {
-        return heapSz;
-    }
+        void heapifyUp()
+        {
+            for(int i = 1; i <= heapSz; i++)
+            {
+                siftUp(i);
+            }
+        }
 
-    bool hEmpty()
-    {
-        return (heapSz == 0);
-    }
+        void heapifyDown()
+        {
+            for(int i = heapSz; i >= 1; i--)
+            {
+                siftDown(i);
+            }
+        }
+
+    public:
+        BinaryHeap()
+        {
+            this -> heapSz = 0;
+        }
+
+        BinaryHeap(vector<int> &v)
+        {
+            BinaryHeap();
+            for(int num : v)
+            {
+                h[++heapSz] = num;
+            }
+            heapifyDown();
+        }
+
+        void push(int x)
+        {
+            h[++heapSz] = x;
+            siftUp(heapSz);
+        }
+
+        void pop()
+        {
+            if(empty())
+            {
+                return;
+            }
+            swap(h[1], h[heapSz--]);
+            siftDown(1);
+        }
+
+        int top()
+        {
+            if(empty())
+            {
+                return -1;
+            }
+            return h[1];
+        }
+
+        int size()
+        {
+            return heapSz;
+        }
+
+        bool empty()
+        {
+            return (heapSz == 0);
+        }
 };
 
 // Testing
 int main()
 {
-    heap H;
-    H.init();
+    BinaryHeap *H = new BinaryHeap();
 
-    int q, kom, x;
-    scanf("%d", &q);
-    while(q--)
+    int kom;
+    while(1)
     {
+        printf("0 - init\n1 - push\n2 - top\n3 - pop\n4 - size\n");
         scanf("%d", &kom);
+        if(kom == 0)
+        {
+            // heapify
+            int n, num;
+            vector<int> v;
+            scanf("%d", &n);
+            for(int i = 1; i <= n; i++)
+            {
+                scanf("%d", &num);
+                v.push_back(num);
+            }
+            H = new BinaryHeap(v);
+        }
         if(kom == 1)
         {
-            // insert
+            // push
+            int x;
             scanf("%d", &x);
-            H.push(x);
+            H -> push(x);
         }
         else if(kom == 2)
         {
-            // peek
-            printf("Max element: %d\n", H.top());
+            // top
+            printf("Max element: %d\n", H -> top());
         }
         else if(kom == 3)
         {
             // pop
-            H.pop();
+            H -> pop();
         }
         else if(kom == 4)
         {
             // size
-            printf("Heap size: %d\n", H.hSize());
+            printf("Heap size: %d\n", H -> size());
         }
     }
     return  0;
 }
-
-/*
-    #include <priority_queue>:
-
-    struct cmp
-    {
-        bool operator()(const node a,const node b)
-        const
-        {
-             return a.x<b.x;
-        }
-    };
-    priority_queue<heapdata, vector<heapdata>, cmp> pq;
-*/

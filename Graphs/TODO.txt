@@ -3,7 +3,3 @@
 - Kosaraju's Strongly Connected Components
 - Tarjan's Strongly Connected Components
 - Biconnected Components + Bridges + Articulation Vertices
-
-- Shell sort
-- Radix sort x 2
-- Counting sort 

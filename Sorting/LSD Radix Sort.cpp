@@ -22,34 +22,62 @@ using namespace std;
 
 // The array we're sorting and its size
 int a[MAXN];
-int cnt[MAXNUM];
 int tmp[MAXN];
 int n;
-int range; // Number range: [1..range]
+
+// Extract digit at position pos
+int digitAt(int n, int pos)
+{
+    return (n / lrint(pow(10, pos))) % 10;
+}
 
 // Stable version
-void countingSort()
+bool countingSort(int pos)
 {
+    // Reset cnt array
+    int cnt[10];
+    for(int i = 0; i <= 9; i++)
+    {
+        cnt[i] = 0;
+    }
     // Count every element
     for(int i = 1; i <= n; i++)
     {
-        cnt[a[i]]++;
+        cnt[digitAt(a[i], pos)]++;
+    }
+    // Sorted
+    if(cnt[0] == n)
+    {
+        return true;
     }
     // Calculate indices
-    for(int i = 1; i <= range; i++)
+    for(int i = 1; i <= 9; i++)
     {
         cnt[i] += cnt[i-1];
     }
     // Place the elements in a temporary array
     for(int i = n; i >= 1; i--)
     {
-        int idx = cnt[a[i]]--;
+        int idx = cnt[digitAt(a[i], pos)]--;
         tmp[idx] = a[i];
     }
     // Put the elements back
     for(int i = 1; i <= n; i++)
     {
         a[i] = tmp[i];
+    }
+    // Not sorted
+    return false;
+}
+
+void lsdRadixSort()
+{
+    for(int pos = 0; pos <= 9; pos++)
+    {
+        if(countingSort(pos))
+        {
+            return;
+        }
     }
 }
 
@@ -61,8 +89,7 @@ int main()
     {
         scanf("%d", &a[i]);
     }
-    range = 1000;
-    countingSort();
+    lsdRadixSort();
     for(int i = 1; i <= n; i++)
     {
         printf("%d ", a[i]);

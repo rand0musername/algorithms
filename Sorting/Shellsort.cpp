@@ -1,7 +1,8 @@
 // RandomUsername (Nikola Jovanovic)
-// Counting Sort
-// Sorting an array: O( N + K )
-// N - array size, K - upper bound for the numbers
+// Shellsort
+// Sorting an array: O( N^2 )
+// N - array size
+// Better upper bound can be achieved with smarter gaps
 
 #include <bits/stdc++.h>
 #define DBG false
@@ -15,41 +16,31 @@
 #define mid (l+r)/2
 #define INF 1000000000
 #define MAXN 10005
-#define MAXNUM 1000005
 #define MOD 1000000007
 
 using namespace std;
 
 // The array we're sorting and its size
 int a[MAXN];
-int cnt[MAXNUM];
-int tmp[MAXN];
 int n;
-int range; // Number range: [1..range]
 
-// Stable version
-void countingSort()
+void insertionSort(int gap)
 {
-    // Count every element
     for(int i = 1; i <= n; i++)
     {
-        cnt[a[i]]++;
+        for(int j = i-gap; j >= 1; j -= gap)
+        {
+            if(a[j] > a[j+gap])
+                swap(a[j], a[j+gap]);
+        }
     }
-    // Calculate indices
-    for(int i = 1; i <= range; i++)
+}
+
+void shellSort()
+{
+    for(int gap = n/2; gap >= 1; gap /= 2)
     {
-        cnt[i] += cnt[i-1];
-    }
-    // Place the elements in a temporary array
-    for(int i = n; i >= 1; i--)
-    {
-        int idx = cnt[a[i]]--;
-        tmp[idx] = a[i];
-    }
-    // Put the elements back
-    for(int i = 1; i <= n; i++)
-    {
-        a[i] = tmp[i];
+        insertionSort(gap);
     }
 }
 
@@ -61,8 +52,7 @@ int main()
     {
         scanf("%d", &a[i]);
     }
-    range = 1000;
-    countingSort();
+    shellSort();
     for(int i = 1; i <= n; i++)
     {
         printf("%d ", a[i]);
