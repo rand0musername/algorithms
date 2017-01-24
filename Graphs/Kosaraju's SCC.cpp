@@ -1,5 +1,5 @@
 // RandomUsername (Nikola Jovanovic)
-// Tarjan's algorithm for finding strongly connected
+// Kosaraju's algorithm for finding strongly connected
 // components in a directed graph
 // O(V + E) - one DFS
 
@@ -20,57 +20,69 @@ using namespace std;
 
 struct node
 {
-    vector<int> adj;
-    int num, low; // DFS numbering, lowpoint
-    bool onStack; // visited vertex without a component
+    vector<int> adj; // original graph
+    vector<int> adjT; // reversed graph
     int comp; // index of the SCC this node belongs to
+    bool visited; // for DFS1
 };
 
 node g[MAXN];
 int n, m;
-int T; // DFS numbering
-stack<int> s; // vertices without a component
-
-// Store the results, O(V) memory
+stack<int> s; // all graph nodes ordered by DFS exit time
 vector<vector<int>> components;
 
-void tarjan(int curr)
+// First DFS, establish an ordering of the nodes that 
+// corresponds to the topological sorting of the component graph
+// there is an edge comp(u) -> comp(v) => dfsExit(u) > dfsExit(v) 
+void DFS1(int curr)
 {
-    // For each node A we check:
-    // low(A)==A => A is a head of a strongly connected component
-    int treeChildren = 0;
-    g[curr].low = g[curr].num = T++;
-    s.push(curr);
-    g[curr].onStack = true;
+    g[curr].visited = true;
     for(int nxt : g[curr].adj)
     {
-        if(g[nxt].num == 0)
+        if(!g[nxt].visited)
         {
-            // Tree edge
-            tarjan(nxt);
-            g[curr].low = min(g[curr].low, g[nxt].low);
-        }
-        else if(g[nxt].onStack)
-        {
-            // Relevant back/cross edge
-            g[curr].low = min(g[curr].low, g[nxt].num);
+            DFS1(nxt);
         }
     }
-    if(g[curr].low == g[curr].num)
+    // We put nodes with highest DFS exit time on top of the stack
+    s.push(curr); 
+}
+
+// Second DFS, build components
+void DFS2(int curr, int componentIdx, vector<int> *component)
+{
+    g[curr].comp = componentIdx;
+    component -> push_back(curr);
+    for(int nxt : g[curr].adjT)
     {
-        // New strongly connected component
-        vector<int> component;
-        int last = 0;
-        do
+        if(g[nxt].comp == 0)
         {
-            last = s.top();
-            component.push_back(last);
-            g[last].comp = components.size() + 1; // Counting SCCs from 1
-            s.pop();
+            DFS2(nxt, componentIdx, component);
         }
-        while(last != curr);
-        components.push_back(component);
     }
+}
+
+int kosaraju()
+{
+    for(int i = 1; i <= n; i++)
+    {
+        if(!g[i].visited)
+        {
+            DFS1(i);
+        }
+    }
+    int numComponents = 0;
+    while(!s.empty())
+    {
+        if(g[s.top()].comp == 0)
+        {
+            vector<int> component;
+            DFS2(s.top(), ++numComponents, &component);
+            components.push_back(component);
+        }
+        s.pop();
+    }
+    return numComponents;
 }
 
 void printComponents()
@@ -105,8 +117,9 @@ int main()
         for(int i = 1; i <= n; i++)
         {
             g[i].adj.clear();
-            g[i].num = g[i].low = g[i].comp = 0;
-            g[i].onStack = false;
+            g[i].adjT.clear();
+            g[i].comp = 0;
+            g[i].visited = false;
             sinkComponent[i] = true;
         }
         for(int i = 0; i < m; i++)
@@ -114,18 +127,13 @@ int main()
             int u, v;
             scanf("%d %d", &u, &v);
             g[u].adj.push_back(v);
+            g[v].adjT.push_back(u);
         }
-        T = 1; // DFS numbering
-        for(int i = 1; i <= n; i++)
-        {
-            if(g[i].num == 0)
-            {
-                tarjan(i);
-            }
-        }
+        kosaraju();
         // printComponents();
         // BOTTOM: we are looking for all SCCs with 0 
         // outgoing edges in the component graph
+        // (NB this can be done more easily by exploiting Kosaraju's toposort)
         for(int i = 1; i <= n; i++)
         {
             for(int v : g[i].adj)
