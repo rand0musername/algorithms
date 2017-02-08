@@ -1,6 +1,6 @@
 // RandomUsername (Nikola Jovanovic)
 // Shellsort
-// Sorting an array: O( N^2 )
+// Sorting an array: O( N*log^2(N) )
 // N - array size
 // Better upper bound can be achieved with smarter gaps
 
