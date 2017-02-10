@@ -1,5 +1,5 @@
 // RandomUsername (Nikola Jovanovic)
-// Binary Search Tree
+// Naive Binary Search Tree
 
 #include <cstdio>
 #include <iostream>
@@ -11,9 +11,9 @@
 #include <algorithm>
 
 template <typename T>
-class BinarySearchTree {
+class NaiveBst {
  public:
-  BinarySearchTree() {
+  NaiveBst() {
     root = NULL;
     size = 0;
   }
@@ -174,7 +174,7 @@ class BinarySearchTree {
 
 int main() {
   // Test based on: https://en.wikipedia.org/wiki/Binary_search_tree
-  BinarySearchTree<std::string>* tree = new BinarySearchTree<std::string>();
+  NaiveBst<std::string>* tree = new NaiveBst<std::string>();
   tree -> Insert({8, "Eight"});
   tree -> Insert({3, "Three"});
   tree -> Insert({10, "Ten"});
