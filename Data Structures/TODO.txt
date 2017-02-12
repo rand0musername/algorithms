@@ -1,3 +1,0 @@
-- B (B+, B*), RB (LLRB), Splay, Treap
-- Binomial Heap, Pairing Heap, Fibonacci Heap
-- Link-Cut, vEB
