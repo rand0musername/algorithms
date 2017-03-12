@@ -152,7 +152,7 @@ PairingHeap* PairingHeap::TwoPass(Node* head) {
   return right_tree;
 }
 
-void PairingHeap::PrintToDot(Node* curr, std::ofstream &dot_file) {
+void PairingHeap::PrintToDot(Node* curr, std::ofstream& dot_file) {
   if (curr == NULL) {
     return;
   }
@@ -193,7 +193,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_full");
+  heap -> Draw("pairheap_full");
   heap -> DecreaseKey(sev, 1);
   std::cout << "Size: " << heap -> GetSize();
   min_node = heap -> FindMin();
@@ -202,7 +202,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_dec");
+  heap -> Draw("pairheap_dec");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize();
   min_node = heap -> FindMin();
@@ -211,7 +211,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_del");
+  heap -> Draw("pairheap_del");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize();
   min_node = heap -> FindMin();
@@ -220,6 +220,6 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_end");
+  heap -> Draw("pairheap_end");
   return 0;
 }

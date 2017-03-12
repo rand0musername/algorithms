@@ -1,176 +1,178 @@
 // RandomUsername (Nikola Jovanovic)
 // Naive Binary Search Tree
 
-#include <cstdio>
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 #include <string>
-#include <vector>
-#include <tuple>
-#include <algorithm>
 
 template <typename T>
 class NaiveBst {
  public:
-  NaiveBst() {
-    root = NULL;
-    size = 0;
-  }
-
-  // Traverses the tree and finds data associated with a given key.
-  bool Find(int key, T* data) {
-    Node* curr = root;
-    while (curr != NULL) {
-      if (key < curr -> key) {
-        curr = curr -> left;
-      } else if (key > curr -> key) {
-        curr = curr -> right;
-      } else {
-        *data = curr -> data;
-        return true;
-      }
+  NaiveBst();
+  bool Find(int key, T* data);
+  bool Insert(std::pair<int, T> kv);
+  bool Delete(int key);
+  int GetSize();
+  void Draw(std::string name);
+ private:
+  struct Node {
+    int key;
+    T data;
+    Node* left;
+    Node* right;
+    explicit Node(std::pair<int, T> kv) {
+      key = kv.first;
+      data = kv.second;
+      right = left = NULL;
     }
-    return false;
-  }
+  };
+  void PrintToDot(Node* curr, std::ofstream& dot_file);
+  Node* root;
+  int size;
+};
 
-  // Inserts a given (key, data) pair into the tree.
-  bool Insert(std::pair<int, T> kv) {
-    if (root == NULL) {
-      root = new Node(kv);
-      size++;
+template <typename T>
+NaiveBst<T>::NaiveBst() {
+  root = NULL;
+  size = 0;
+}
+
+template <typename T>
+bool NaiveBst<T>::Find(int key, T* data) {
+  Node* curr = root;
+  while (curr != NULL) {
+    if (key < curr -> key) {
+      curr = curr -> left;
+    } else if (key > curr -> key) {
+      curr = curr -> right;
+    } else {
+      *data = curr -> data;
       return true;
     }
-    Node* curr = root;
-    while (kv.first != curr -> key) {
-      if (kv.first < curr -> key) {
-        if (curr -> left == NULL) {
-          curr -> left = new Node(kv);
-          size++;
-          return true;
-        }
-        curr = curr -> left;
-      } else {
-        if (curr -> right == NULL) {
-          curr -> right = new Node(kv);
-          size++;
-          return true;
-        }
-        curr = curr -> right;
-      }
-    }
-    return false;
   }
+  return false;
+}
 
-  // Deletes the node with a given key, if such node exists.
-  bool Delete(int key) {
-    Node* parent = NULL;
-    Node* curr = root;
-    // Finds the node to be deleted.
-    while (curr != NULL && key != curr -> key) {
-      parent = curr;
-      if (key < curr -> key) {
-        curr = curr -> left;
-      } else {
-        curr = curr -> right;
-      }
-    }
-    if (curr == NULL) {
-      return false;
-    }
-    Node** child_ptr;
-    if (curr == root) {
-      child_ptr = &root;
-    } else if (parent -> left == curr) {
-      child_ptr = &(parent -> left);
-    } else {
-      child_ptr = &(parent -> right);
-    }
-    // Removes the node from the tree.
-    if (curr -> left == NULL && curr -> right == NULL) {
-      *child_ptr = NULL;
-      delete curr;
-      size--;
-    } else if (curr -> left == NULL) {
-      *child_ptr = curr -> right;
-      delete curr;
-      size--;
-    } else if (curr -> right == NULL) {
-      *child_ptr = curr -> left;
-      delete curr;
-      size--;
-    } else {
-      // The node has both children, swaps curr with its predecessor.
-      Node* pred = curr -> left;
-      while (pred -> right != NULL) {
-        pred = pred -> right;
-      }
-      int pred_key = pred -> key;
-      T pred_data = pred -> data;
-      Delete(pred_key);
-      curr -> key = pred_key;
-      curr -> data = pred_data;
-    }
+template <typename T>
+bool NaiveBst<T>::Insert(std::pair<int, T> kv) {
+  if (root == NULL) {
+    root = new Node(kv);
+    size++;
     return true;
   }
-
-  // Creates a DOT file with tree representation
-  // and visualizes the tree using GraphViz.
-  void Draw(std::string name) {
-    std::ofstream dot_file;
-    dot_file.open(name + ".dot");
-    dot_file << "digraph{\n";
-    PrintTree(root, dot_file);
-    dot_file << "}\n";
-    dot_file.close();
-    std::string command = "dot -Tpng " + name + ".dot -o " + name + ".png";
-    system(command.c_str());
-  }
-
-  int GetSize() {
-    return size;
-  }
-
- private:
-    class Node {
-     public:
-      explicit Node(std::pair<int, T> kv) {
-        key = kv.first;
-        data = kv.second;
-        right = left = NULL;
+  Node* curr = root;
+  while (kv.first != curr -> key) {
+    if (kv.first < curr -> key) {
+      if (curr -> left == NULL) {
+        curr -> left = new Node(kv);
+        size++;
+        return true;
       }
-
-      int key;
-      T data;
-      Node* right;
-      Node* left;
-    };
-
-    // Does a postorder traversal and prints tree data in DOT format.
-    void PrintTree(Node* curr, std::ofstream &dot_file) {
-      if (curr == NULL) {
-        return;
+      curr = curr -> left;
+    } else {
+      if (curr -> right == NULL) {
+        curr -> right = new Node(kv);
+        size++;
+        return true;
       }
-      dot_file << curr -> key << "[label=\"" << curr -> key << "\"];\n";
-      if (curr -> left != NULL) {
-        dot_file << curr -> key << " -> " << curr -> left -> key << "\n";
-        PrintTree(curr -> left, dot_file);
-      } else {
-        dot_file << "null_l_" << curr -> key << "[shape=point];\n";
-        dot_file << curr -> key << " -> " << "null_l_" << curr -> key << "\n";
-      }
-      if (curr -> right != NULL) {
-        dot_file << curr -> key << " -> " << curr -> right -> key << "\n";
-        PrintTree(curr -> right, dot_file);
-      } else {
-        dot_file << "null_r_" << curr -> key << "[shape=point];\n";
-        dot_file << curr -> key << " -> " << "null_r_" << curr -> key << "\n";
-      }
+      curr = curr -> right;
     }
+  }
+  return false;
+}
 
-    Node* root;
-    int size;
-};
+template <typename T>
+bool NaiveBst<T>::Delete(int key) {
+  Node* parent = NULL;
+  Node* curr = root;
+  // Find the node to be deleted
+  while (curr != NULL && key != curr -> key) {
+    parent = curr;
+    if (key < curr -> key) {
+      curr = curr -> left;
+    } else {
+      curr = curr -> right;
+    }
+  }
+  if (curr == NULL) {
+    return false;
+  }
+  Node** child_ptr;
+  if (curr == root) {
+    child_ptr = &root;
+  } else if (parent -> left == curr) {
+    child_ptr = &(parent -> left);
+  } else {
+    child_ptr = &(parent -> right);
+  }
+  // Remove the node from the tree
+  if (curr -> left == NULL && curr -> right == NULL) {
+    *child_ptr = NULL;
+    delete curr;
+    size--;
+  } else if (curr -> left == NULL) {
+    *child_ptr = curr -> right;
+    delete curr;
+    size--;
+  } else if (curr -> right == NULL) {
+    *child_ptr = curr -> left;
+    delete curr;
+    size--;
+  } else {
+    // The node has both children, swap curr with its predecessor
+    Node* pred = curr -> left;
+    while (pred -> right != NULL) {
+      pred = pred -> right;
+    }
+    int pred_key = pred -> key;
+    T pred_data = pred -> data;
+    Delete(pred_key);
+    curr -> key = pred_key;
+    curr -> data = pred_data;
+  }
+  return true;
+}
+
+template <typename T>
+int NaiveBst<T>::GetSize() {
+  return size;
+}
+
+// Visualizes the tree using GraphViz.
+template <typename T>
+void NaiveBst<T>::Draw(std::string name) {
+  std::ofstream dot_file;
+  dot_file.open(name + ".dot");
+  dot_file << "digraph{\n";
+  PrintToDot(root, dot_file);
+  dot_file << "}\n";
+  dot_file.close();
+  std::string command = "dot -Tpng " + name + ".dot -o " + name + ".png";
+  system(command.c_str());
+}
+
+template <typename T>
+void NaiveBst<T>::PrintToDot(Node* curr, std::ofstream& dot_file) {
+  if (curr == NULL) {
+    return;
+  }
+  dot_file << curr -> key << "[label=\"" << curr -> key << "\"];\n";
+  if (curr -> left != NULL) {
+    dot_file << curr -> key << " -> " << curr -> left -> key << "\n";
+    PrintToDot(curr -> left, dot_file);
+  } else {
+    dot_file << "null_l_" << curr -> key << "[shape=point];\n";
+    dot_file << curr -> key << " -> " << "null_l_" << curr -> key << "\n";
+  }
+  if (curr -> right != NULL) {
+    dot_file << curr -> key << " -> " << curr -> right -> key << "\n";
+    PrintToDot(curr -> right, dot_file);
+  } else {
+    dot_file << "null_r_" << curr -> key << "[shape=point];\n";
+    dot_file << curr -> key << " -> " << "null_r_" << curr -> key << "\n";
+  }
+}
 
 int main() {
   // Test based on: https://en.wikipedia.org/wiki/Binary_search_tree
@@ -184,8 +186,8 @@ int main() {
   tree -> Insert({6, "Six"});
   tree -> Insert({7, "Seven"});
   tree -> Insert({4, "Four"});
-  tree -> Draw("tree_full");
   std::cout << "Tree size: " << tree -> GetSize() << std::endl;
+  tree -> Draw("nbst_full");
   std::string data;
   tree -> Find(4, &data);
   std::cout << "Data with key 4: " << data << std::endl;
@@ -194,7 +196,7 @@ int main() {
   std::cout << "One-kid deletion: " << tree -> Delete(10) << std::endl;
   std::cout << "Two-kid deletion: " << tree -> Delete(3) << std::endl;
   std::cout << "Root deletion: " << tree -> Delete(8) << std::endl;
-  tree -> Draw("tree_final");
   std::cout << "Tree size: " << tree -> GetSize() << std::endl;
+  tree -> Draw("nbst_final");
   return 0;
 }

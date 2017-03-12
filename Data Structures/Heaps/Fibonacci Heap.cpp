@@ -269,7 +269,7 @@ int main() {
   heap -> Insert(new Node(96));
   heap -> Insert(new Node(19));
   heap -> Insert(new Node(8));
-  heap -> Draw("heap_full");
+  heap -> Draw("fibheap_full");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize();
   Node* min_node = heap -> FindMin();
@@ -278,7 +278,7 @@ int main() {
   } else {
     std::cout << " Empty" << std::endl;
   }
-  heap -> Draw("heap_del");
+  heap -> Draw("fibheap_del");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize();
   min_node = heap -> FindMin();
@@ -287,17 +287,17 @@ int main() {
   } else {
     std::cout << " Empty" << std::endl;
   }
-  heap -> Draw("heap_del2");
+  heap -> Draw("fibheap_del2");
   heap -> DecreaseKey(n11, 3);
   heap -> DecreaseKey(n99, 0);
   heap -> DecreaseKey(n17, 2);
   heap -> DecreaseKey(n12, 1);  // Cascade
-  heap -> Draw("heap_dec");
+  heap -> Draw("fibheap_dec");
   heap -> DeleteMin();
   heap -> DeleteMin();
   heap -> DeleteMin();
   heap -> DeleteMin();
   heap -> DeleteMin();
-  heap -> Draw("heap_end");
+  heap -> Draw("fibheap_end");
   return 0;
 }

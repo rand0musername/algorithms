@@ -139,7 +139,7 @@ int main() {
   heap -> Insert(4);
   heap -> Insert(3);
   heap -> Insert(6);
-  heap -> Draw("heap_full");
+  heap -> Draw("binheap_full");
   heap -> DeleteMin();
   heap -> DecreaseKey(2, 1);
   int* min_key = heap -> FindMin();
@@ -148,7 +148,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_end");
+  heap -> Draw("binheap_end");
   std::cout << "Size: " << heap -> GetSize() << std::endl;
   return 0;
 }

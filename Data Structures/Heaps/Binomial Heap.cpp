@@ -250,7 +250,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_full");
+  heap -> Draw("bnmheap_full");
   heap -> DecreaseKey(sev, 1);
   std::cout << "Size: " << heap -> GetSize() << std::endl;
   min_node = heap -> FindMin();
@@ -259,7 +259,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_dec");
+  heap -> Draw("bnmheap_dec");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize() << std::endl;
   min_node = heap -> FindMin();
@@ -268,7 +268,7 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_del");
+  heap -> Draw("bnmheap_del");
   heap -> DeleteMin();
   std::cout << "Size: " << heap -> GetSize() << std::endl;
   min_node = heap -> FindMin();
@@ -277,6 +277,6 @@ int main() {
   } else {
     std::cout << "Empty" << std::endl;
   }
-  heap -> Draw("heap_end");
+  heap -> Draw("bnmheap_end");
   return 0;
 }
